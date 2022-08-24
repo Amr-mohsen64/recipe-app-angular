@@ -1,11 +1,12 @@
 import { EventEmitter, Injectable } from "@angular/core";
+import { Subject } from "rxjs";
 import { Ingredient } from "../shared/ingredients.model";
 
 @Injectable({
   providedIn: "root",
 })
 export class ShoppingListService {
-  ingredientsChanged = new EventEmitter<Ingredient[]>(); // to fix copy of array issue
+  ingredientsChanged = new Subject<Ingredient[]>(); // to fix copy of array issue
 
   private ingredients: Ingredient[] = [
     new Ingredient("applse", 5),
@@ -16,7 +17,7 @@ export class ShoppingListService {
 
   addIngredient(ingredient: Ingredient) {
     this.ingredients.push(ingredient);
-    this.ingredientsChanged.emit(this.ingredients.slice()); //emit new value of ingredients array after pushing to it
+    this.ingredientsChanged.next(this.ingredients.slice()); //emit new value of ingredients array after pushing to it
   }
 
   getIngredient() {
@@ -25,6 +26,6 @@ export class ShoppingListService {
 
   addIngredients(ingredients: Ingredient[]) {
     this.ingredients.push(...ingredients);
-    this.ingredientsChanged.emit(this.ingredients.slice());
+    this.ingredientsChanged.next(this.ingredients.slice());
   }
 }
