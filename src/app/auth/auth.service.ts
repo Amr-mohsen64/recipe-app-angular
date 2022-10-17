@@ -9,6 +9,7 @@ interface AuthResponeData {
   refreshToken: string;
   expiresIn: string;
   localId: string;
+  registered?: boolean;
 }
 
 @Injectable({
@@ -29,7 +30,7 @@ export class AuthService {
       )
       .pipe(
         // it's good to handle errors here in the service and get it from component throuh
-        // catchError which catches erro and throw error tothore error to subcribers
+        // catchError which catches erro and throwError to throw error to subcribers
         catchError((errorRes) => {
           let errorMessage = "An unknowen error occured!";
           console.log(errorRes);
@@ -41,6 +42,35 @@ export class AuthService {
             switch (errorRes.error.error.message) {
               case "EMAIL_EXISTS":
                 errorMessage = "this Email Already exists";
+                break;
+            }
+          }
+          return throwError(errorMessage);
+        })
+      );
+  }
+
+  signIn(email: string, password: string) {
+    return this.http
+      .post<AuthResponeData>(
+        "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAQlDdfRRBpxGCiTB23x_DFk7sCs1h5ag0",
+        {
+          email: email,
+          password: password,
+          returnSecureToken: true,
+        }
+      )
+      .pipe(
+        catchError((errorRes) => {
+          let errorMessage = "An unknowen error occured!";
+          console.log(errorRes);
+
+          if (!errorRes.error || !errorRes.error.error) {
+            throwError(errorMessage);
+          } else {
+            switch (errorRes.error.error.message) {
+              case "INVALID_PASSWORD":
+                errorMessage = "the password you enterd is invalid";
                 break;
             }
           }

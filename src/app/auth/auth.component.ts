@@ -30,7 +30,16 @@ export class AuthComponent implements OnInit {
 
     this.isLoading = true;
     if (this.isLoginMode) {
-      ///
+      this.authService.signIn(email, password).subscribe(
+        (responseData) => {
+          console.log(responseData);
+          this.isLoading = false;
+        },
+        (errorMsg) => {
+          this.error = errorMsg;
+          this.isLoading = false;
+        }
+      );
     } else {
       this.authService.signUp(email, password).subscribe(
         (responseData) => {
@@ -38,7 +47,6 @@ export class AuthComponent implements OnInit {
           this.isLoading = false;
         },
         (errorMsg) => {
-          console.log(errorMsg);
           this.error = errorMsg;
           this.isLoading = false;
         }
