@@ -26,25 +26,21 @@ export class DataStorageService {
   }
 
   fetchRecipes() {
-    // take(1) take one user and then unsubscribe from it
-    return this.authService.user.pipe(take(1)).pipe(
-      exhaustMap((user) => {
-        // exhasutMap it waits for the first observable to complete [user observable] then after it gives us use user and return new observable chain and replace it with the inner observable [http observable] in the pipe chain
-        return this.http.get<Recipe[]>(
-          "https://ng-course-recipe-book-f7698-default-rtdb.firebaseio.com/recipes.json",
-          { params: new HttpParams().set("auth", user.token) }
-        );
-      }),
-      map((recipes) => {
-        return recipes.map((recipe) => {
-          return {
-            ...recipe,
-            ingredients: recipe.ingredients ? recipe.ingredients : [],
-          };
-        });
-      }),
-      // allows us to excute some code without alter the data funled thriugh observible
-      tap((recipes) => this.recipeService.setRecipes(recipes))
-    );
+    return this.http
+      .get<Recipe[]>(
+        "https://ng-course-recipe-book-f7698-default-rtdb.firebaseio.com/recipes.json"
+      )
+      .pipe(
+        map((recipes) => {
+          return recipes.map((recipe) => {
+            return {
+              ...recipe,
+              ingredients: recipe.ingredients ? recipe.ingredients : [],
+            };
+          });
+        }),
+        // allows us to excute some code without alter the data funled thriugh observible
+        tap((recipes) => this.recipeService.setRecipes(recipes))
+      );
   }
 }
