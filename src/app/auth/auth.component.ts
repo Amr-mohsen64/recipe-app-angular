@@ -54,4 +54,8 @@ export class AuthComponent implements OnInit {
 
     console.log(authForm.value);
   }
+
+  onHandleError() {
+    this.error = null;
+  }
 }
