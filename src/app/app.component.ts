@@ -1,4 +1,5 @@
-import { Component } from "@angular/core";
+import { AuthService } from "./auth/auth.service";
+import { Component, OnInit } from "@angular/core";
 import { Recipe } from "./recipes/recipe.model";
 
 @Component({
@@ -6,11 +7,9 @@ import { Recipe } from "./recipes/recipe.model";
   templateUrl: "./app.component.html",
   styleUrls: ["./app.component.css"],
 })
-export class AppComponent {
-  loadedFeature: string = "recipe";
-  selectedRecipe: Recipe;
-  onSelectFeature(feature: string) {
-    this.loadedFeature = feature;
-    console.log(this.loadedFeature);
+export class AppComponent implements OnInit {
+  constructor(private authService: AuthService) {}
+  ngOnInit(): void {
+    this.authService.autoLogin();
   }
 }
