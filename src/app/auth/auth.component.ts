@@ -1,8 +1,15 @@
-import { Router } from "@angular/router";
-import { AuthResponeData, AuthService } from "./auth.service";
+import { PlaceholderDirective } from "./../shared/placeholder.directive";
+import { AlertComponent } from "./../shared/alert/alert.component";
+import {
+  Component,
+  ComponentFactoryResolver,
+  OnInit,
+  ViewChild,
+} from "@angular/core";
 import { NgForm } from "@angular/forms";
-import { Component, OnInit } from "@angular/core";
+import { Router } from "@angular/router";
 import { Observable } from "rxjs";
+import { AuthResponeData, AuthService } from "./auth.service";
 
 @Component({
   selector: "app-auth",
@@ -13,8 +20,13 @@ export class AuthComponent implements OnInit {
   isLoginMode: boolean = true;
   isLoading: boolean = false;
   error: string = null;
+  @ViewChild(PlaceholderDirective) alertHost: PlaceholderDirective;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private componentFactoryResolver: ComponentFactoryResolver
+  ) {}
 
   ngOnInit(): void {}
 
@@ -48,6 +60,7 @@ export class AuthComponent implements OnInit {
       },
       (errorMsg) => {
         this.error = errorMsg;
+        this.showErrorAlert(errorMsg);
         this.isLoading = false;
       }
     );
@@ -57,5 +70,18 @@ export class AuthComponent implements OnInit {
 
   onHandleError() {
     this.error = null;
+  }
+
+  showErrorAlert(errorMsg: string) {
+    // const alertCmp = new AlertComponent(); -> that's wrong angualr must instaniate not me
+    const alertCmpFactory =
+      this.componentFactoryResolver.resolveComponentFactory(AlertComponent);
+    const hostViewContainerRef = this.alertHost.viewContainerRef;
+    hostViewContainerRef.clear();
+    const componentRef = hostViewContainerRef.createComponent(alertCmpFactory);
+    componentRef.instance.message = errorMsg;
+    componentRef.instance.close.subscribe(() => {
+      hostViewContainerRef.clear();
+    });
   }
 }
