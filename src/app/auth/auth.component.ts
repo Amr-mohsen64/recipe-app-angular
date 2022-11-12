@@ -1,14 +1,14 @@
-import { PlaceholderDirective } from "./../shared/placeholder.directive";
-import { AlertComponent } from "./../shared/alert/alert.component";
 import {
   Component,
   ComponentFactoryResolver,
   OnInit,
-  ViewChild,
+  ViewChild
 } from "@angular/core";
 import { NgForm } from "@angular/forms";
 import { Router } from "@angular/router";
 import { Observable } from "rxjs";
+import { AlertComponent } from "./../shared/alert/alert.component";
+import { PlaceholderDirective } from "./../shared/placeholder.directive";
 import { AuthResponeData, AuthService } from "./auth.service";
 
 @Component({
